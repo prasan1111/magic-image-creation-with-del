@@ -82,3 +82,14 @@ def delete_gen(id:int):
             os.remove(image_path)
         gens.delete(id)
     return "Hit Refresh!"
+
+# Generate an image and save it to the folder (in a separate thread)
+@threaded
+def generate_and_save(prompt, id, folder):
+    image_bytes = query({"inputs": prompt})
+    image = Image.open(io.BytesIO(image_bytes))
+    image.save(f"{folder}/{id}.png")
+    return True
+
+if __name__ == '__main__':
+    uvicorn.run("main:app", host='0.0.0.0', port=int(os.getenv("PORT", default=8000)))
